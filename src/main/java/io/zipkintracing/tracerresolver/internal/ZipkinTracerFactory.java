@@ -25,7 +25,7 @@ public class ZipkinTracerFactory implements TracerFactory {
       ZIPKIN_SERVICENAME_KEY
   };
 
-  private final static String ZIPKIN_URL = "https://zipkin-staging.onerainc.com/api/v2/spans";
+  //private final static String ZIPKIN_URL = "https://zipkin-staging.onerainc.com/api/v2/spans";
 
   private final static Logger logger = Logger.getLogger(ZipkinTracerFactory.class.getName());
 
@@ -42,9 +42,12 @@ public class ZipkinTracerFactory implements TracerFactory {
       logger.log(Level.INFO, "Retrieved Tracer parameter " + propName + "=" + props.getProperty(propName));
     }
 
-    String zipkinEndpoint = ZIPKIN_URL;
+    String zipkinEndpoint = "";
     if (props.containsKey(ZIPKIN_ENDPOINT_KEY)) {
       zipkinEndpoint = props.getProperty(ZIPKIN_ENDPOINT_KEY);
+    } else {
+      logger.log(Level.SEVERE, "Zipkin endpoint property is required. Proceeding with Noop tracer");
+      return NoopTracerFactory.create();
     }
 
     String zipkinServicename = "default_service_name";
