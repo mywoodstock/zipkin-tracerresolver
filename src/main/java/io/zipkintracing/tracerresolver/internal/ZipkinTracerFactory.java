@@ -42,7 +42,7 @@ public class ZipkinTracerFactory implements TracerFactory {
       logger.log(Level.INFO, "Retrieved Tracer parameter " + propName + "=" + props.getProperty(propName));
     }
 
-    String zipkinEndpoint = "";
+    String zipkinEndpoint;
     if (props.containsKey(ZIPKIN_ENDPOINT_KEY)) {
       zipkinEndpoint = props.getProperty(ZIPKIN_ENDPOINT_KEY);
     } else {
