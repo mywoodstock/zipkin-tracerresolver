@@ -17,9 +17,12 @@ import java.util.logging.Logger;
 
 public class ZipkinTracerFactory implements TracerFactory {
 
+  private final static String ZIPKIN_ENDPOINT_KEY = "zipkin.endpoint";
+  private final static String ZIPKIN_SERVICENAME_KEY = "zipkin.servicename";
+
   public static final String[] PROPERTIES = {
-      "zipkin.endpoint",
-      "zipkin.servicename"
+      ZIPKIN_ENDPOINT_KEY,
+      ZIPKIN_SERVICENAME_KEY
   };
 
   private final static String ZIPKIN_URL = "https://zipkin-staging.onerainc.com/api/v2/spans";
@@ -39,17 +42,25 @@ public class ZipkinTracerFactory implements TracerFactory {
       logger.log(Level.INFO, "Retrieved Tracer parameter " + propName + "=" + props.getProperty(propName));
     }
 
-    // ...
+    String zipkinEndpoint = props.getProperty(ZIPKIN_ENDPOINT_KEY);
+    if (zipkinEndpoint == null) {
+      zipkinEndpoint = ZIPKIN_URL;
+    }
+
+    String zipkinServicename = props.getProperty(ZIPKIN_SERVICENAME_KEY);
+    if (zipkinServicename == null) {
+      zipkinServicename = "default_service_name";
+    }
 
     try {
-      final URLConnectionSender sender = URLConnectionSender.create(ZIPKIN_URL);
+      final URLConnectionSender sender = URLConnectionSender.create(zipkinEndpoint);
       final AsyncReporter reporter = AsyncReporter
                                          .builder(sender)
                                          .messageTimeout(100000L, TimeUnit.MILLISECONDS)
                                          .build();
       final Tracing braveTracing = Tracing.newBuilder()
                                        .traceId128Bit(true)
-                                       .localServiceName("SOME SERVICE NAME")
+                                       .localServiceName(zipkinServicename)
                                        .spanReporter(reporter)
                                        .build();
       return BraveTracer.newBuilder(braveTracing)
