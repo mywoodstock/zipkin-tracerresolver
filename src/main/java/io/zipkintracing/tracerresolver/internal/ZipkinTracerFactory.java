@@ -42,14 +42,14 @@ public class ZipkinTracerFactory implements TracerFactory {
       logger.log(Level.INFO, "Retrieved Tracer parameter " + propName + "=" + props.getProperty(propName));
     }
 
-    String zipkinEndpoint = props.getProperty(ZIPKIN_ENDPOINT_KEY);
-    if (zipkinEndpoint == null) {
-      zipkinEndpoint = ZIPKIN_URL;
+    String zipkinEndpoint = ZIPKIN_URL;
+    if (props.containsKey(ZIPKIN_ENDPOINT_KEY)) {
+      zipkinEndpoint = props.getProperty(ZIPKIN_ENDPOINT_KEY);
     }
 
-    String zipkinServicename = props.getProperty(ZIPKIN_SERVICENAME_KEY);
-    if (zipkinServicename == null) {
-      zipkinServicename = "default_service_name";
+    String zipkinServicename = "default_service_name";
+    if (props.containsKey(ZIPKIN_SERVICENAME_KEY)) {
+      zipkinServicename = props.getProperty(ZIPKIN_SERVICENAME_KEY);
     }
 
     try {
