@@ -29,7 +29,8 @@ public class ZipkinTracerParameters {
       return props;
     }
 
-    try (FileInputStream stream = new FileInputStream(configFile)) {
+    try {
+      FileInputStream stream = new FileInputStream(configFile);
       props.load(stream);
     } catch (IOException e) {
       logger.log(Level.WARNING, "Failed to read Tracer configuration file " + path);
